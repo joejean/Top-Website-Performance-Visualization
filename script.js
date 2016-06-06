@@ -3,7 +3,7 @@ var API_URL = 'https://www.googleapis.com/pagespeedonline/v2/runPagespeed?';
 //PageSpeed API key:
 var API_KEY = 'AIzaSyDjGFiLuWMaXN6usMdpSqocr79la6gXpYU';
 // Load the Visualization API and the corechart package.
-google.charts.load('current', {'packages':['corechart']});
+google.charts.load('current', {'packages':['table','corechart']});
 
 var URL_DATA = [
     "Souqalmal.com",
@@ -69,8 +69,7 @@ var URL_DATA = [
 // Object that will hold the callbacks that process results from the
 // PageSpeed Insights API.
 var callbacks = {}
-var mobileSpeedData = [];
-var usabilityData = []; 
+var mobileSpeeUsabilityData = [];
 var desktopSpeedData = [];
 
 
@@ -141,14 +140,11 @@ function getWebSiteDomain(websiteUrl){
 callbacks.processResults = function(result){
   var website_name = getWebSiteDomain(result.id);
   if (result.ruleGroups.USABILITY){
-      mobileSpeedData.push([website_name, result.ruleGroups.SPEED.score]);
-      mobileSpeedData.sort(function(a,b){return b[1]- a[1]});
-      usabilityData.push([website_name, result.ruleGroups.USABILITY.score]);
-      usabilityData.sort(function(a,b){return b[1]- a[1]});
-
+      mobileSpeeUsabilityData.push([website_name, result.ruleGroups.SPEED.score,result.ruleGroups.USABILITY.score]);
+      mobileSpeeUsabilityData.sort(function(a,b,c){return b[1]- a[1]});
       // Set a callback to run when the Google Visualization API is loaded.
       /*google.charts.setOnLoadCallback(*/
-      google.charts.setOnLoadCallback(drawMobileChart(mobileSpeedData, usabilityData));
+      google.charts.setOnLoadCallback(drawMobileChart(mobileSpeeUsabilityData));
   } else{
 
       desktopSpeedData.push([website_name, result.ruleGroups.SPEED.score]);
@@ -185,40 +181,48 @@ myLoop();                      //  start the loop
 // Callback that creates and populates a data table,
 // instantiates the pie chart, passes in the data and
 // draws it.
-function drawMobileChart(mobileSpeed, usabilityScores){
+function drawMobileChart(mobileData){
   // Create the data table.
-  var desktopSpeedData = new google.visualization.DataTable();
   var mobileSpeedData = new google.visualization.DataTable();
-  var usabilityData = new google.visualization.DataTable();
 
   mobileSpeedData.addColumn('string', 'Website');
-  mobileSpeedData.addColumn('number', 'Speed Score');
+  mobileSpeedData.addColumn('number', 'Mobile Speed Score');
+  mobileSpeedData.addColumn('number', 'Usability Score');
   
-  for(var i =0; i< mobileSpeed.length; i++){
-    mobileSpeedData.addRows([mobileSpeed[i]]);
-  }
-
-  usabilityData.addColumn('string', 'Website');
-  usabilityData.addColumn('number', 'Usability Score');
-
-  for(var i =0; i< usabilityScores.length; i++){
-    usabilityData.addRows([usabilityScores[i]]);
+  for(var i =0; i< mobileData.length; i++){
+    mobileSpeedData.addRows([mobileData[i]]);
   }
 
   // Set chart options
-  var usabilityOptions = {'title':'Usability Scores For UAE Websites',
+  var options = {'title':'Speed & Usability Scores For UAE Websites',
                  'width':800,
-                 'height':2000};
-  var mobileOptions = {'title':'Speed Scores on Mobile For UAE Websites',
-                 'width':800,
-                 'height':2000};
+                 'height':2000,
+                 'colors': ['#b0120a', '#ffab91'],
+                 'hAxis': {
+                           'title': 'Total Score',
+                           'minValue': 0
+                         },
+                         'vAxis': {
+                           'title': 'Website'
+                         }
+               };
+  
+
+  var view = new google.visualization.DataView(mobileSpeedData);
+  view.setColumns([0, 1, 2]);
+
+  var table = new google.visualization.Table(document.getElementById('mobile_speed_usability_table'));
+  table.draw(view); /*{width: '100%', height: '100%'}*/
 
   // Instantiate and draw our chart, passing in some options.
   var mobileSpeedChart = new google.visualization.BarChart(document.getElementById('mobile_speed_usability_chart'));
-  mobileSpeedChart.draw(mobileSpeedData, mobileOptions);
+  mobileSpeedChart.draw(view, options);
 
-  var usabilityChart = new google.visualization.BarChart(document.getElementById('usability'));
-  usabilityChart.draw(usabilityData, usabilityOptions);
+  google.visualization.events.addListener(table, 'sort',
+        function(event) {
+          mobileSpeedData.sort([{column: event.column, desc: !event.ascending}]);
+          mobileSpeedChart.draw(view, options);
+        });
 }
 
 function drawDesktopSpeedChart(desktopSpeed){
@@ -236,8 +240,20 @@ function drawDesktopSpeedChart(desktopSpeed){
   var options = {'title':'Speed Scores On Desktop For UAE Websites',
                  'width':800,
                  'height':2000};
-  
+  var view = new google.visualization.DataView(desktopSpeedData);
+  view.setColumns([0, 1]);
+
+  var table = new google.visualization.Table(document.getElementById('desktop_speed_table'));
+  table.draw(view); /*{width: '100%', height: '100%'}*/
+
+
   // Instantiate and draw our chart, passing in some options.
   var chart = new google.visualization.BarChart(document.getElementById('desktop_speed_chart'));
-  chart.draw(desktopSpeedData, options);
+  chart.draw(view, options);
+
+  google.visualization.events.addListener(table, 'sort',
+    function(event) {
+      desktopSpeedData.sort([{column: event.column, desc: !event.ascending}]);
+       chart.draw(view, options);
+    });
 }
