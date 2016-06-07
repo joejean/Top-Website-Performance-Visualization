@@ -11,33 +11,61 @@
 
   <!-- Latest compiled and minified JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-  <title>UAE Website Performance Visualization</title>
+  <title>Top Websites Performance Visualization</title>
 </head>
 <body>
-  <div class="container-fluid">
+  <div class="container">
     <div class="row">
-      
-    </div>
-    <div class="row">
+      <!-- Nav tabs -->
       <h2>Speed and Usability Performance of Top UAE Websites</h2>
-      <h4>On Mobile</h4>
-      <div class="col-md-4" id="mobile_speed_usability_table">
-        
-      </div>
-      <div class="col-md-7" id="mobile_speed_usability_chart">
-        
-      </div>
-    </div>
+      <div class="jumbotron">
+        <p>This visualization presents an interactive graph showing the speed and usability scores &ndash; on both desktop and mobile &ndash; of the most popular UAE websites according to <a href="http://www.alexa.com/topsites/countries/AE">Alexa</a>. The performance data is dynamically computed with <a href="https://developers.google.com/speed/pagespeed/insights/">Google PageSpeed Insights.</a> </p>
+        <p class="alert alert-danger"><small>Please be patient. The page takes a while to load the data and render the graph.</small></p>
+        <p class="alert alert-success"><small>The visualization is interactive! Please click on the table header to sort by speed score, name or usability score.</small></p>
+        <p><small>This is a work in progress, I plan to add more features to it. Your suggestions are welcomed. Thank you!</small></p>
 
-    <div class="row">
-      <h4>On Desktop</h4>
-      <div class="col-md-4 table-responsive" id="desktop_speed_table">
+      </div>
+      <div class="row">
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#mobile" aria-controls="mobile" role="tab" data-toggle="tab">On Mobile</a></li>
+          <li role="presentation"><a href="#desktop" aria-controls="desktop" role="tab" data-toggle="tab">On Desktop</a></li>
+        </ul>
+      </div>
+      
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="mobile">
+          <div class="row">
+            
+            <h4>On Mobile</h4>
+            <div class="col-md-4" id="mobile_speed_usability_table">
+              
+            </div>
+            <div class="col-md-7" id="mobile_speed_usability_chart">
+              
+            </div>
+          </div>
+
+        </div>
+        <div role="tabpanel" class="tab-pane" id="desktop">
+          <div class="row">
+            <h4>On Desktop</h4>
+            <div class="col-md-4 table-responsive" id="desktop_speed_table">
+              
+            </div>
+            <div class="col-md-7" id="desktop_speed_chart">
+              
+            </div>
+          </div>
+
+        </div>
         
       </div>
-      <div class="col-md-7" id="desktop_speed_chart">
-        
-      </div>
+
     </div>
+   
+
+    
   </div>
 </body>
   <script src="script.js"></script>

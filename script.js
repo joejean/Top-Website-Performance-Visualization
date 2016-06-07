@@ -52,7 +52,6 @@ var URL_DATA = [
     "Adec.ac.ae",
     "Alldubai.ae",
     "Sharafdg.com",
-    "Rta.ae",
     "Mashreqbank.com",
     "Thenational.ae",
     "Adcb.com",
@@ -163,19 +162,21 @@ callbacks.processResults = function(result){
 var i = 1;                     //  set your counter to 1
 var j= 0;
 
-function myLoop () {           //  create a loop function
-   setTimeout(function () { //  call a 3s setTimeout when the loop is called
-      runPagespeedMobile(URL_DATA[j]);          //  your code here
+//This function sends 1 request per second to the Google Page Speed API
+function sendRequests () { 
+  // call a 1s setTimeout when the loop is called         
+   setTimeout(function () { 
+      runPagespeedMobile(URL_DATA[j]);          
       runPagespeedDesktop(URL_DATA[j]); 
       j++;
-      i++;                     //  increment the counter
-      if (i < URL_DATA.length) {            //  if the counter < 10, call the loop function
-         myLoop();             //  ..  again which will trigger another 
-      }                        //  ..  setTimeout()
-   }, 1000)
+      i++;  
+      // if the counter < URL_DATA.length, sendRequests();              
+      if (i < URL_DATA.length) {            
+         sendRequests();              
+      }  
+   }, 500)
 }
-
-myLoop();                      //  start the loop
+sendRequests();
 
 
 // Callback that creates and populates a data table,
@@ -186,7 +187,7 @@ function drawMobileChart(mobileData){
   var mobileSpeedData = new google.visualization.DataTable();
 
   mobileSpeedData.addColumn('string', 'Website');
-  mobileSpeedData.addColumn('number', 'Mobile Speed Score');
+  mobileSpeedData.addColumn('number', 'Speed Score');
   mobileSpeedData.addColumn('number', 'Usability Score');
   mobileSpeedData.addColumn({type:'string', role:'annotation'});
   
@@ -205,15 +206,8 @@ function drawMobileChart(mobileData){
                  'hAxis': {
                            'minValue': 0
                           },
-                 'vAxis': {
-                           'title': 'WEBSITE',
-                           'titleTextStyle':{
-                            'bold': true
-                           }
-                         },
-                  
                };
-  
+
   var tableOptions =  {
           width: '100%', 
           height: '100%', 
@@ -246,7 +240,7 @@ function drawDesktopSpeedChart(desktopSpeed){
   var desktopSpeedData = new google.visualization.DataTable();
  
   desktopSpeedData.addColumn('string', 'Website Name');
-  desktopSpeedData.addColumn('number', 'Speed Score on Desktop');
+  desktopSpeedData.addColumn('number', 'Speed Score');
   
   for(var i =0; i< desktopSpeed.length; i++){
     desktopSpeedData.addRows([desktopSpeed[i]]);
@@ -263,19 +257,25 @@ function drawDesktopSpeedChart(desktopSpeed){
                  'hAxis': {
                            'minValue': 0
                           },
-                 'vAxis': {
-                           'title': 'WEBSITE',
-                           'titleTextStyle':{
-                            'bold': true
-                           }
-                         },
-                  
-               };
+              
+  };
+
+  var tableOptions =  {
+          width: '100%', 
+          height: '100%', 
+          page:'enable', 
+          pageSize:16,
+          showRowNumber: true,
+          cssClassNames:{
+
+          }
+        };               
+              
   var view = new google.visualization.DataView(desktopSpeedData);
   view.setColumns([0, 1]);
 
   var table = new google.visualization.Table(document.getElementById('desktop_speed_table'));
-  table.draw(view); /*{width: '100%', height: '100%'}*/
+  table.draw(view, tableOptions); 
 
 
   // Instantiate and draw our chart, passing in some options.
