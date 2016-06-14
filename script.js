@@ -1,7 +1,7 @@
 
 var API_URL = 'https://www.googleapis.com/pagespeedonline/v2/runPagespeed?';
 //PageSpeed API key:
-var API_KEY = 'AIzaSyDjGFiLuWMaXN6usMdpSqocr79la6gXpYU';
+var API_KEY = '';
 // Load the Visualization API and the corechart package.
 google.charts.load('current', {'packages':['table','corechart']});
 
